@@ -27,15 +27,21 @@ public class MainActivity extends AppCompatActivity {
     Za test potrebe
      */
     static TextView text = null;
-
+    
     //Sluzi da prati offset od danasnjeg datuma (pri pregledu podataka)
     static int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
+        FetchData fetch = new FetchData();
+        fetch.execute();
+
+        Intent slider = new Intent(this, ScreenSlidePagerActivity.class);
+
+        startActivity(slider);
 
         /*
         Uzmi intent, uzmi extra koji dolazi kao offset, promeni trenutni offset
@@ -45,10 +51,9 @@ public class MainActivity extends AppCompatActivity {
         int j = intent.getIntExtra("Dan offset", 0);
         i = i-j;
 
-        text = (TextView) findViewById(R.id.textview);
+        //text = (TextView) findViewById(R.id.textview);
 
-        FetchData fetch = new FetchData();
-        fetch.execute();
+
 
     }
 
@@ -236,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
             return JsonString;
 
         }
-
+/*
         @Override
         protected void onPostExecute(String JsonString) {
             try {
@@ -244,6 +249,6 @@ public class MainActivity extends AppCompatActivity {
             } catch(JSONException e){
                 Log.v("onPostExecute", "JSON Error", e);
             }
-        }
+        }*/
     }
 }

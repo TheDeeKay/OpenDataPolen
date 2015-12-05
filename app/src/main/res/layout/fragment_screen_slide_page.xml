@@ -1,14 +1,68 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/content"
+    android:orientation="vertical"
     tools:context=".ScreenSlidePageFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:orientation="horizontal"
+        android:layout_marginBottom="48dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight ="3"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight = "1"
+            android:layout_marginRight="32dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/fragment_ime_biljke"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:fontFamily="sans-serif"
+        android:gravity="bottom"
+        android:text="Ime biljke"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/fragment_poruka"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_weight="3"
+        android:fontFamily="sans-serif"
+        android:text="PORUKA"
+        android:textColor="@android:color/black"
+        android:textSize="32sp"
+        android:layout_marginTop="18dp"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/lorem_ipsum" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="72sp"
 
-</ScrollView>
+        />
+
+
+
+</LinearLayout>
