@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Za test potrebe
      */
     static TextView text = null;
-    
+
     //Sluzi da prati offset od danasnjeg datuma (pri pregledu podataka)
     static int i = 0;
 
