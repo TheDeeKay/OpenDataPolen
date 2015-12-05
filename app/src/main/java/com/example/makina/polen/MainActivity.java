@@ -67,12 +67,12 @@ public class MainActivity extends AppCompatActivity {
     /*
     onClick metod za Levo dugme, pokrece main activity, menja offset za -1
      */
-    /*public void clickLevoButton(View view){
-        Intent intent = new Intent(this, MainActivity.class);
+    public void clickLevoButton(View view){
+        Intent intent = new Intent(this, ScreenSlidePagerActivity.class);
         intent.putExtra("Dan offset", -1);
 
         startActivity(intent);
-    }*/
+    }
 
     /*
     onClick metod za Desno dugme, pokrece main activity, menja offset za +1

@@ -29,6 +29,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.makina.polen.MainActivity" />
         </activity>
+        <activity
+            android:name=".ScreenSlidePagerActivity"
+            android:label="@string/title_activity_screenslidepager"
+            android:parentActivityName="com.example.makina.polen.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.makina.polen.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
