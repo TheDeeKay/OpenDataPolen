@@ -19,15 +19,42 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    class Kljuc{
+        int id_lokacije;
+        int id_biljke;
 
+        public Kljuc(int k1, int k2){id_lokacije=k1;id_biljke=k2;}
+
+    }
+
+    public static InputStream isVrstePolena;
+    public static InputStream isNormalizacija;
+    public static InputStream isStanice;
+    public static InputStream isStepeni;
+    public static InputStream isTezine;
+
+    public static ArrayList<Kljuc> pozicije = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        isVrstePolena = getResources().openRawResource(R.raw.vrste_polena);
+        isNormalizacija = getResources().openRawResource(R.raw.normalizacija);
+        isStanice = getResources().openRawResource(R.raw.lokacije_stanica_polen);
+        isStepeni = getResources().openRawResource(R.raw.stepeni);
+        isTezine = getResources().openRawResource(R.raw.tezine);
+
+        generisi_haseve();
+        pozicije.add(new Kljuc(10, 5));
+        pozicije.add(new Kljuc(7,6));
 
         FetchData fetch = new FetchData();
         fetch.execute();
@@ -100,7 +127,117 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static HashMap<String, Integer> biljke_id = new HashMap<>();
+    public static HashMap<String, Integer> biljke_grupa = new HashMap<>();
+    public static HashMap<String, Integer> biljke_alergenost = new HashMap<>();
+    public static HashMap<String, Integer> lokacija_id = new HashMap<>();
+    public static HashMap<String, Double> lokacija_visina = new HashMap<>();
+    public static HashMap<String, Double> lokacija_sirina = new HashMap<>();
+    public static HashMap<Integer, String> id_biljke = new HashMap<>();
+    public static HashMap<Integer, String> id_lokacija = new HashMap<>();
 
+
+
+    public void zadaj_grupu(String s, String g){
+        if (g.equals("Drveće"))
+            biljke_grupa.put(s,0);
+        else
+        if (g.equals("Trava"))
+            biljke_grupa.put(s,2);
+        else
+            biljke_grupa.put(s,1);
+    }
+
+    public void generisi_haseve(){
+
+
+
+        try {
+            //dodavanje normalizacije
+
+
+            StringBuilder str = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(isVrstePolena, "UTF-8"));
+            br.readLine();
+            String line = null;
+            int i = 0;
+            while (i < 25) {
+                line = br.readLine();
+                String[] parts = line.split(",");
+                id_biljke.put(Integer.parseInt(parts[0]), parts[2]);
+                biljke_id.put(parts[2],Integer.parseInt(parts[0]) - 1);
+                zadaj_grupu(parts[2],parts[3]);
+                biljke_alergenost.put(parts[2],Integer.parseInt(parts[4]));
+                i++;
+            }
+
+            br.close();
+
+
+
+
+            str = new StringBuilder();
+            br = new BufferedReader(new InputStreamReader(isStanice, "UTF-8"));
+            br.readLine();
+            line = null;
+            i = 1;
+            line = br.readLine();
+            while(i<17){
+                String[] parts = line.split(",");
+                if(parts[1].equals("Beograd - Novi Beograd")){
+                    String[] pp = parts[1].split(" ");
+                    parts[1] = pp[0];
+                }
+                id_lokacija.put(Integer.parseInt(parts[0]), parts[1]);
+                lokacija_id.put(parts[1], Integer.parseInt(parts[0]) - 1);
+                lokacija_sirina.put(parts[1], Double.valueOf(parts[2]));
+                lokacija_visina.put(parts[1], Double.valueOf(parts[3]));
+                i++;
+                line = br.readLine();
+            }
+
+
+            br.close();
+
+
+            for(String s: biljke_id.keySet())
+                System.out.println(" " + s);
+
+            System.out.println("RANDOM");
+
+
+            for(String s: lokacija_id.keySet())
+                System.out.println(" " + s);
+
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sortiraj_listu(ArrayList<String[]> lista, final int col_godina, final int col_mesec, final int col_dan){
+
+
+
+        //Sorting
+        Collections.sort(lista, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] str1, String[] str2) {
+
+                if (str2[col_godina].equals(str1[col_godina])) {
+                    if (str2[col_mesec].equals(str1[col_mesec])){
+                        return str1[col_dan].compareTo(str2[col_dan]);
+                    }else{
+                        return str1[col_mesec].compareTo(str2[col_mesec]);
+                    }
+                } else {
+                    return str1[col_godina].compareTo(str2[col_godina]);
+                }
+
+            }
+        });
+
+    }
     /*
     Async Task za fetchovanje JSON data
      */
@@ -123,7 +260,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject result = Json.getJSONObject("result");
                 JSONArray records = result.getJSONArray("records");
 
-                rezultat = new String[20];
+                ArrayList<String[]> lista = new ArrayList<>();
+
+                rezultat = new String[records.length()];
                 for(int i = 0; i < records.length(); i++) {
 
                     //Kolone koje posle sklapamo u rezultat
@@ -134,11 +273,31 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject dan = records.getJSONObject(i);
 
                     datum = dan.getString("DATUM");
+                    String[] parts = datum.split("-");
                     tendencija = dan.getString("TENDENCIJA");
                     koncentracija = dan.getString("KONCENTRACIJA");
 
+                    String[] linija  = new String[5];
+                    linija[0] = parts[0];linija[1] = parts[1];linija[2] = parts[2];
+
+                    linija[3] = tendencija; linija[4] = koncentracija;
+
+                    lista.add(linija);
+
                     rezultat[i] = "Datum: "+datum+"\nTendencija: "+tendencija+
                             "\nKoncentracija: "+koncentracija+"\n";
+                }
+
+                sortiraj_listu(lista, 0, 1, 2);
+
+
+                for(int i=0;i<30;i++)
+                {
+                    String[] str = lista.get(i);
+
+
+                    for(int j=0;j<5;j++)
+                        System.out.println(" " + str[j]);
                 }
 
             } catch(JSONException e){
@@ -154,6 +313,8 @@ public class MainActivity extends AppCompatActivity {
         String JsonString = null;
 
 
+
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -163,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 //Konstruisi URL za konekciju na sajt agencije
-                String baseUrl = "http://data.sepa.gov.rs/api/action/datastore/search.json?resource_id=d291f9c7-b1a4-4c97-9618-c545a22fb23d&limit=20";
+                String baseUrl = "http://data.sepa.gov.rs/api/action/datastore/search.json?resource_id=d291f9c7-b1a4-4c97-9618-c545a22fb23d";
                 URL url = new URL(baseUrl);
 
                 // Postavi request na GET i uspostavi konekciju
@@ -211,15 +372,7 @@ public class MainActivity extends AppCompatActivity {
             return JsonString;
 
         }
-/*
-        @Override
-        protected void onPostExecute(String JsonString) {
-            try {
-                setIt(getDataFromJson(JsonString));
-            } catch(JSONException e){
-                Log.v("onPostExecute", "JSON Error", e);
-            }
-        }*/
+
     }
 
     private static double[] update_stepene(double[] glavni, ArrayList<double[]> stepeni){
@@ -256,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
         return (double)1/(1 + Math.exp(-x));
     }
 
-    private int predikcija(double dan, double mesec, double godina,
+    public static int predikcija(double dan, double mesec, double godina,
                            double alergenost, double duzina, double sirina,
                            double idGrupe, double idVrste, double idLokacije ){
 
@@ -279,9 +432,9 @@ public class MainActivity extends AppCompatActivity {
 
         StringBuilder text = new StringBuilder();
         try {
-            InputStream is = getResources().openRawResource(R.raw.stepeni);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(isStepeni, "UTF-8"));
             String line1, line2;
             while ((line1 = br.readLine()) != null) {
                 line2 = br.readLine();
@@ -403,9 +556,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<double[]> listatezina = new ArrayList<>();
         double[] bias = new double[3];
         try {
-            InputStream is = getResources().openRawResource(R.raw.tezine);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(isTezine, "UTF-8"));
             String line = null;
             int cnt = 1;
             int i = 0;
@@ -463,10 +616,10 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             //dodavanje normalizacije
-            InputStream is = getResources().openRawResource(R.raw.normalizacija);
+
             StringBuilder meanStr = new StringBuilder();
             StringBuilder stdStr = new StringBuilder();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(isNormalizacija, "UTF-8"));
             String line = null;
             int i = 0;
             while (i < 188) {

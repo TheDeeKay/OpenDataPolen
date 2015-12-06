@@ -16,6 +16,12 @@ public class FragmentList extends AppCompatActivity {
         // Required empty public constructor
     }
 
+    public FragmentList(int count) {
+
+
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -9,9 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-/**
- * Created by Makina on 12/5/2015.
- */
+
 public class ScreenSlidePagerActivity extends AppCompatActivity {
     /**
      * The number of pages (wizard steps) to show in this demo.
@@ -38,6 +36,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+
     }
 
     public void klikMeni(View view){
@@ -58,12 +57,17 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return new ScreenSlidePageFragment();
+            Bundle bundle = new Bundle();
+            bundle.clear();
+            bundle.putInt("length", position);
+            ScreenSlidePageFragment tmp = new ScreenSlidePageFragment();
+            tmp.setArguments(bundle);
+            return tmp;
         }
 
         @Override
         public int getCount() {
-            return NUM_PAGES;
+            return 2;
         }
     }
 }
