@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         isStepeni = getResources().openRawResource(R.raw.stepeni);
         isTezine = getResources().openRawResource(R.raw.tezine);
 
+        citanje_iz_fajlova();
         generisi_haseve();
         pozicije.add(new Kljuc(10, 5));
         pozicije.add(new Kljuc(7,6));
@@ -409,32 +410,20 @@ public class MainActivity extends AppCompatActivity {
         return (double)1/(1 + Math.exp(-x));
     }
 
-    public static int predikcija(double dan, double mesec, double godina,
-                           double alergenost, double duzina, double sirina,
-                           double idGrupe, double idVrste, double idLokacije ){
+    private static ArrayList<double[]> listaStepena;
+    private static double[] bias;
+    private static ArrayList<double[]> listatezina;
+    private static double[] mean;
+    private static double[] std;
 
-        int vr_vel = 19, grp_vel = 3, lok_vel = 26;
 
 
-        double[] konacanVektor = new double[53];
-        konacanVektor[0] = dan;
-        konacanVektor[1] = mesec;
-        konacanVektor[2] = godina;
-        konacanVektor[3] = alergenost;
-        konacanVektor[4] = duzina;
-        konacanVektor[5] = sirina;
-        konacanVektor[(int)idGrupe + 6] = 1;
-        konacanVektor[(int)idVrste + 9] = 1;
-        konacanVektor[(int)idLokacije + 35] = 1;
-
-        //for(int i=6;i<53;i++)
-        //konacanVektor[i]--;
-
+    private void citanje_iz_fajlova(){
         StringBuilder text = new StringBuilder();
         try {
+            InputStream is = getResources().openRawResource(R.raw.stepeni);
 
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(isStepeni, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line1, line2;
             while ((line1 = br.readLine()) != null) {
                 line2 = br.readLine();
@@ -447,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ArrayList<double[]> listaStepena = new ArrayList<>();
+        listaStepena = new ArrayList<>();
         String stepeniStr = text.toString();
         String[] delovi = stepeniStr.split("\n");
 
@@ -547,18 +536,13 @@ public class MainActivity extends AppCompatActivity {
 
         */
 
-
-
-        double[] finalni_feature = update_stepene(konacanVektor, listaStepena);
-
-
         text = new StringBuilder();
-        ArrayList<double[]> listatezina = new ArrayList<>();
-        double[] bias = new double[3];
+        listatezina = new ArrayList<>();
+        bias = new double[3];
         try {
+            InputStream is = getResources().openRawResource(R.raw.tezine);
 
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(isTezine, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line = null;
             int cnt = 1;
             int i = 0;
@@ -610,16 +594,16 @@ public class MainActivity extends AppCompatActivity {
             listatezina.add(tmp_tezina);
         }
 
-        double[] mean = new double[1485];
-        double[] std = new double[1485];
+        mean = new double[1485];
+        std = new double[1485];
 
 
         try {
             //dodavanje normalizacije
-
+            InputStream is = getResources().openRawResource(R.raw.normalizacija);
             StringBuilder meanStr = new StringBuilder();
             StringBuilder stdStr = new StringBuilder();
-            BufferedReader br = new BufferedReader(new InputStreamReader(isNormalizacija, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line = null;
             int i = 0;
             while (i < 188) {
@@ -658,12 +642,34 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public static int predikcija(double dan, double mesec, double godina,
+                           double alergenost, double duzina, double sirina,
+                           double idGrupe, double idVrste, double idLokacije ){
+
+        int vr_vel = 19, grp_vel = 3, lok_vel = 26;
+
+
+        double[] konacanVektor = new double[53];
+        konacanVektor[0] = dan;
+        konacanVektor[1] = mesec;
+        konacanVektor[2] = godina;
+        konacanVektor[3] = alergenost;
+        konacanVektor[4] = duzina;
+        konacanVektor[5] = sirina;
+        konacanVektor[(int)idGrupe + 6] = 1;
+        konacanVektor[(int)idVrste + 9] = 1;
+        konacanVektor[(int)idLokacije + 35] = 1;
+
+        //for(int i=6;i<53;i++)
+        //konacanVektor[i]--;
+
+        double[] finalni_feature = update_stepene(konacanVektor, listaStepena);
+
+
         for(int i=0;i<finalni_feature.length;i++)
             finalni_feature[i] = (double)(finalni_feature[i] - mean[i])/std[i];
-
-        double[] test = listatezina.get(0);
-
-
 
         double[] rezultati = new double[3];
         for(int i=0;i<3;i++)
@@ -690,5 +696,6 @@ public class MainActivity extends AppCompatActivity {
 
         return retVal;
     }
+
 
 }

@@ -38,6 +38,8 @@ public class ScreenSlidePageFragment extends Fragment {
 
         TextView poruka = (TextView) rootView.findViewById(R.id.fragment_poruka);
 
+        poruka.setText(String.valueOf(koncentracija/3.0));
+
         return rootView;
     }
 }
