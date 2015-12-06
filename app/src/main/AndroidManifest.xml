@@ -39,6 +39,16 @@
                 android:value="com.example.makina.polen.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".FragmentList"
+            android:label="FragmentList"
+            android:parentActivityName=".ScreenSlidePagerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.makina.polen.ScreenSlidePagerActivity" />
+        </activity>
+
         <receiver android:name=".NewAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

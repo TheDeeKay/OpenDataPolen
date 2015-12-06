@@ -1,17 +1,18 @@
 package com.example.makina.polen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 /**
  * Created by Makina on 12/5/2015.
  */
-public class ScreenSlidePagerActivity extends FragmentActivity {
+public class ScreenSlidePagerActivity extends AppCompatActivity {
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
@@ -40,8 +41,8 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
     }
 
     public void klikMeni(View view){
-        getSupportFragmentManager().beginTransaction().
-                add(R.id.pager, new FragmentList()).commit();
+        Intent intent = new Intent(this, FragmentList.class);
+        startActivity(intent);
     }
 
 
