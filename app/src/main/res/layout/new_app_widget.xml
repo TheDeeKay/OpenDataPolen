@@ -20,8 +20,16 @@
         android:textStyle="bold|italic" />
 
     <Button
+        android:text="RANDOM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/actionButton"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refresh_button"
+        android:text="refresh"
+        android:layout_toRightOf="@id/actionButton"/>
 
 </RelativeLayout>

@@ -19,10 +19,12 @@
             android:layout_weight ="3"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight = "1"
-            android:layout_marginRight="32dp"/>
+            android:id="@+id/imgbtn"
+            android:layout_width="72dp"
+            android:layout_height="84dp"
+            android:layout_marginRight="32dp"
+            android:onClick="klikMeni"/>
+
     </LinearLayout>
 
     <TextView
@@ -56,9 +58,8 @@
         />
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:textSize="128sp"
         android:fontFamily="sans-serif"
         android:textColor="@android:color/darker_gray"
