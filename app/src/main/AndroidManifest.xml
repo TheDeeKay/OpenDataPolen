@@ -60,6 +60,15 @@
                 android:resource="@xml/new_app_widget_info" />
         </receiver>
 
+        <activity
+            android:name=".PredikcijaActivity"
+            android:label="@string/title_activity_predikcija"
+            android:parentActivityName=".ScreenSlidePagerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.makina.polen.ScreenSlidePagerActivity" />
+        </activity>
     </application>
 
 </manifest>

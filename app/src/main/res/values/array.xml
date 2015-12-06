@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gradovi">
+        <item>Beograd - Novi Beograd</item>
+        <item>Čačak</item>
+        <item>Kragujevac</item>
+        <item>Kruševac</item>
+        <item>Kula</item>
+        <item>Požarevac</item>
+        <item>Vranje</item>
+        <item>Vršac</item>
+        <item>Zaječar</item>
+        <item>Pančevo</item>
+        <item>Kraljevo</item>
+        <item>Subotica</item>
+        <item>Loznica</item>
+        <item>Niš</item>
+        <item>Zlatibor</item>
+        <item>Bečej</item>
+
+    </string-array>
+</resources>

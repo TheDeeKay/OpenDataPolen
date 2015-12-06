@@ -10,4 +10,6 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_android_gpstracking">AndroidGPSTrackingActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_predikcija">PredikcijaActivity</string>
 </resources>

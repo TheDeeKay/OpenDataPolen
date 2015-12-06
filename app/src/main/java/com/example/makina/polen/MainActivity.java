@@ -23,7 +23,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+
 public class MainActivity extends AppCompatActivity {
+
+    static int[] biljkeChecked = new int[25];
+
+
 
     class Kljuc{
         int id_lokacije;

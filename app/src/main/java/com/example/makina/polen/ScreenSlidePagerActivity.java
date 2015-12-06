@@ -10,7 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 
-public class ScreenSlidePagerActivity extends AppCompatActivity {
+public class ScreenSlidePagerActivity extends AppCompatActivity{
+
+    public GPSTracker tracker;
+    public static double lat, longit;
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
@@ -32,6 +35,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
 
+        tracker = new GPSTracker(ScreenSlidePagerActivity.this);
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -42,6 +46,15 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
     public void klikMeni(View view){
         Intent intent = new Intent(this, FragmentList.class);
         startActivity(intent);
+
+        if(tracker.canGetLocation()) {
+            tracker.getLocation();
+            lat = tracker.getLatitude();
+            longit = tracker.getLongitude();
+        }else{
+            tracker.showSettingsAlert();
+        }
+
     }
 
 
@@ -57,6 +70,15 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+
+            if(tracker.canGetLocation()) {
+                tracker.getLocation();
+                lat = tracker.getLatitude();
+                longit = tracker.getLongitude();
+            }else{
+                tracker.showSettingsAlert();
+            }
+
             Bundle bundle = new Bundle();
             bundle.clear();
             bundle.putInt("length", position);
