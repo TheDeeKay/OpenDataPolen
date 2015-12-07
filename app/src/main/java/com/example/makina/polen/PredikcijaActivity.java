@@ -1,8 +1,12 @@
 package com.example.makina.polen;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 
@@ -15,9 +19,9 @@ public class PredikcijaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_predikcija);
+        setContentView(R.layout.content_predikcija);
 
-
+        final Context context = this;
 
         String[] gradovi = new String[18];
         for(int i=0; i<18; i++) gradovi[i] = MainActivity.id_lokacija.get(i+1);
@@ -32,13 +36,23 @@ public class PredikcijaActivity extends AppCompatActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Spinner spinner = (Spinner) findViewById(R.id.gradovi);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_gradovi);
         spinner.setAdapter(adapter);
 
         DatePicker picker = (DatePicker) findViewById(R.id.kalendar);
 
+        Button btn = (Button) findViewById(R.id.predikcija_launch_button);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, ScreenSlidePagerActivity.class);
 
 
+
+            }
+        });
             }
 
 

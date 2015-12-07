@@ -14,21 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class FragmentList extends AppCompatActivity {
+public class ListaBiljaka extends AppCompatActivity {
 
-    public FragmentList() {
+    public ListaBiljaka() {
         // Required empty public constructor
-    }
-
-    public FragmentList(int count) {
-
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_list);
+        setContentView(R.layout.lista_biljaka);
 
         String[] biljke = new String[25];
         int j = 0;
@@ -39,7 +34,7 @@ public class FragmentList extends AppCompatActivity {
         List<String> listaBiljaka = new ArrayList<String>(Arrays.asList(biljke));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.fragment_list_item,
+                R.layout.lista_biljaka_item,
                 R.id.fragment_list_item_textview,
                 listaBiljaka);
 
@@ -49,6 +44,7 @@ public class FragmentList extends AppCompatActivity {
 
     }
 
+    //onClick za item iz liste biljaka, precrtava i oznacava da se ne gledaju
     public void onClick(View view) {
 
         TextView txt = (TextView) view;
@@ -66,8 +62,35 @@ public class FragmentList extends AppCompatActivity {
             MainActivity.biljkeChecked[id] = 0;
             txt.setPaintFlags(txt.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         }
+
+
+
+
+        ScreenSlidePagerActivity.mPagerAdapter.notifyDataSetChanged();
     }
+
+
+    //Adapter koji gleda da li je biljka izbacena iz opticaja ili ne
+    /*private class BoljiAdapter<String> extends ArrayAdapter<String>{
+
+
+        public BoljiAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
+            super(context, resource, textViewResourceId, objects);
+        }
+
+        @Override
+        public TextView getView(int position, View convertView, ViewGroup parent) {
+            TextView text = (TextView) super.getView(position, convertView, parent);
+            if(MainActivity.biljkeChecked[position] == 1)
+                text.setPaintFlags(text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+            return text;
+        }
+
+
+    }*/
 }
+
 
 
 

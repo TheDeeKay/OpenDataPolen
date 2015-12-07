@@ -23,15 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BiljkeActivity"
-            android:label="@string/title_activity_biljke"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.makina.polen.MainActivity" />
-        </activity>
-        <activity
             android:name=".ScreenSlidePagerActivity"
             android:label="@string/title_activity_screenslidepager"
             android:parentActivityName=".MainActivity"
@@ -41,7 +32,7 @@
                 android:value="com.example.makina.polen.MainActivity" />
         </activity>
         <activity
-            android:name=".FragmentList"
+            android:name=".ListaBiljaka"
             android:label="FragmentList"
             android:parentActivityName=".ScreenSlidePagerActivity"
             android:theme="@style/AppTheme.NoActionBar">

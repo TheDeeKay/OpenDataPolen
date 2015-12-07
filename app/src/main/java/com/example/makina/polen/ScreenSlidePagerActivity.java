@@ -14,55 +14,45 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
 
     public GPSTracker tracker;
     public static double lat, longit;
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 5;
 
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
+
     private ViewPager mPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
-    private PagerAdapter mPagerAdapter;
+    public static PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
 
-        tracker = new GPSTracker(ScreenSlidePagerActivity.this);
-        // Instantiate a ViewPager and a PagerAdapter.
+
+        //tracker = new GPSTracker(ScreenSlidePagerActivity.this);
+
+        // Dodaj adapter na ViewPager
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-    }
-
-    public void klikMeni(View view){
-        Intent intent = new Intent(this, FragmentList.class);
-        startActivity(intent);
-
-        if(tracker.canGetLocation()) {
+        /*if(tracker.canGetLocation()) {
             tracker.getLocation();
             lat = tracker.getLatitude();
             longit = tracker.getLongitude();
         }else{
             tracker.showSettingsAlert();
-        }
+        }*/
+
+    }
+
+    //Dugme za meni, onClick
+    public void klikMeni(View view){
+        Intent intent = new Intent(this, ListaBiljaka.class);
+        startActivity(intent);
 
     }
 
 
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
+    //PagerAdapter, pravi ViewPager iteme za biljke, ukupno countBiljke()
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         public ScreenSlidePagerAdapter(android.support.v4.app.FragmentManager fm) {
             super(fm);
@@ -71,17 +61,10 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         @Override
         public Fragment getItem(int position) {
 
-            if(tracker.canGetLocation()) {
-                tracker.getLocation();
-                lat = tracker.getLatitude();
-                longit = tracker.getLongitude();
-            }else{
-                tracker.showSettingsAlert();
-            }
-
             Bundle bundle = new Bundle();
             bundle.clear();
-            bundle.putInt("length", position);
+            int pos = MainActivity.pozicijaBiljke(position);
+            bundle.putInt("length", pos);
             ScreenSlidePageFragment tmp = new ScreenSlidePageFragment();
             tmp.setArguments(bundle);
             return tmp;
@@ -89,7 +72,8 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
 
         @Override
         public int getCount() {
-            return 2;
+
+            return MainActivity.countBiljke();
         }
     }
 }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Polen.iml" filepath="$PROJECT_DIR$/Polen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenDataPolen.iml" filepath="$PROJECT_DIR$/OpenDataPolen.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

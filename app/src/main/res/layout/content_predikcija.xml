@@ -19,12 +19,12 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/gradovi"/>
+        android:id="@+id/spinner_gradovi"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/simek"
+        android:id="@+id/predikcija_launch_button"
         android:text="LAUNCH"/>
 
 </LinearLayout>

@@ -26,10 +26,32 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    static int[] biljkeChecked = new int[25];
+    //Cuva koliko ukupno biljaka postoji
+    final static int UKUPNO_BILJAKA = 25;
 
 
+    //Cuva koje su biljke selektovane
+    static int[] biljkeChecked = new int[UKUPNO_BILJAKA];
 
+
+    //Metod za brojanje selektovanih biljaka
+    public static int countBiljke(){
+        int j=25;
+
+        for(int i = 0; i<UKUPNO_BILJAKA; i++) j-=biljkeChecked[i];
+
+        return j;
+    }
+
+    //Metod za trazenje pozicije biljke u okviru selektovanih
+    public static int pozicijaBiljke(int position){
+        int i;
+        for(i=0; position>0 && i<UKUPNO_BILJAKA; i++)
+            if(biljkeChecked[i] == 0) position--;
+        return i;
+    }
+
+    //Kljuc za trazenje po Hash tabelama, sastoji se od id-a biljke i lokacije
     class Kljuc{
         int id_lokacije;
         int id_biljke;
@@ -38,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Streamovi koji se koriste za predikcije
     public static InputStream isVrstePolena;
     public static InputStream isNormalizacija;
     public static InputStream isStanice;
@@ -51,64 +74,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //onCreate puni input streamove jer moraju da budu static da bi se zvali iz predikcija
         isVrstePolena = getResources().openRawResource(R.raw.vrste_polena);
         isNormalizacija = getResources().openRawResource(R.raw.normalizacija);
         isStanice = getResources().openRawResource(R.raw.lokacije_stanica_polen);
         isStepeni = getResources().openRawResource(R.raw.stepeni);
         isTezine = getResources().openRawResource(R.raw.tezine);
 
+        //Generisi heseve
         citanje_iz_fajlova();
         generisi_haseve();
-        pozicije.add(new Kljuc(10, 5));
-        pozicije.add(new Kljuc(7,6));
 
+
+        for(int i = 0; i < UKUPNO_BILJAKA; i++) pozicije.add(new Kljuc(1,i+1));
+        //pozicije.add(new Kljuc(7,6));
+
+        //Fetchuj data
         FetchData fetch = new FetchData();
         fetch.execute();
 
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().
-                    add(R.id.container, new ScreenSlidePageFragment()).commit();
-        }*/
-
+        //Poziva ScreenSlidePager activity
         Intent slider = new Intent(this, ScreenSlidePagerActivity.class);
 
         startActivity(slider);
 
 
-
-        /*
-        Uzmi intent, uzmi extra koji dolazi kao offset, promeni trenutni offset
-         */
-        //Intent intent = getIntent();
-
-        //int j = intent.getIntExtra("Dan offset", 0);
-        //i = i-j;
-
-        //text = (TextView) findViewById(R.id.textview);
-
-
-        double dan = 30,
-                mesec = 15,
-                godina = 2016,
-                visina = 55,
-                sirina = 43.23,
-                alergenost = 2;
-        int id_vrste = 10, id_grupe = 1, id_lokacije = 5;
-
-        int predikcija_ = predikcija(dan, mesec, godina, alergenost, visina, sirina, id_grupe, id_vrste, id_lokacije);
-
-        //TextView text = (TextView) findViewById(R.id.fragment_poruka);
-
-        //System.out.println(predikcija_ + " PRSTI ");
-
-
     }
-
-
-
-
-
-
 
 
     @Override
@@ -133,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Cuva ime biljke, pa id
     public static HashMap<String, Integer> biljke_id = new HashMap<>();
     public static HashMap<String, Integer> biljke_grupa = new HashMap<>();
     public static HashMap<String, Integer> biljke_alergenost = new HashMap<>();
@@ -145,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void zadaj_grupu(String s, String g){
-        if (g.equals("Drveće"))
+        if (g.equals("Drvece"))
             biljke_grupa.put(s,0);
         else
         if (g.equals("Trava"))
@@ -160,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             //dodavanje normalizacije
-
 
             StringBuilder str = new StringBuilder();
             BufferedReader br = new BufferedReader(new InputStreamReader(isVrstePolena, "UTF-8"));
@@ -244,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     /*
     Async Task za fetchovanje JSON data
      */
@@ -364,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                 // Neuspesno uspostavljanje konekcije, nema parsiranja
                 return null;
             } finally {
+                //zatvori konekciju
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
