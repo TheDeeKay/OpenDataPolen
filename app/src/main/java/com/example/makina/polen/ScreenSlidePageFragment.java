@@ -33,7 +33,7 @@ public class ScreenSlidePageFragment extends Fragment {
             }
         });
 
-        Button buteen = (Button) rootView.findViewById(R.id.fragment_poruka);
+        TextView buteen = (TextView) rootView.findViewById(R.id.fragment_poruka);
 
 
 
@@ -49,7 +49,7 @@ public class ScreenSlidePageFragment extends Fragment {
 
         text.setText(MainActivity.id_biljke.get(this.id_biljke));
 
-        int koncentracija = 100/3*MainActivity.predikcija(15, 7, 2016, 2, longitude, lattitude,
+        double koncentracija = 100/3*MainActivity.predikcija(15, 7, 2016, 2, longitude, lattitude,
                 3, 6, 13);
         String k_tmp = null;
         if( koncentracija > 67 ) k_tmp = "Dangerous";
@@ -57,11 +57,11 @@ public class ScreenSlidePageFragment extends Fragment {
         else k_tmp = "Nothing to worry";
         buteen.setText(k_tmp);
 
-        Log.e("NADAMO SE",  ScreenSlidePagerActivity.lat + " " + ScreenSlidePagerActivity.longit);
+        Log.e("NADAMO SE", ScreenSlidePagerActivity.lat + " " + ScreenSlidePagerActivity.longit);
 
         TextView poruka = (TextView) rootView.findViewById(R.id.fragment_poruka);
 
-        //poruka.setText(String.valueOf(koncentracija/3));
+        poruka.setText(k_tmp);
 
         TextView beten = (TextView)rootView.findViewById(R.id.ajde);
         beten.setText(String.valueOf(koncentracija));
