@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     //Cuva koje su biljke selektovane
     static int[] biljkeChecked = new int[UKUPNO_BILJAKA];
 
-
     //Metod za brojanje selektovanih biljaka
     public static int countBiljke(){
         int j=25;
@@ -95,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Poziva ScreenSlidePager activity
         Intent slider = new Intent(this, ScreenSlidePagerActivity.class);
+
+        //Dodaj kod callera - main je 0, predikcija je 1
+        slider.putExtra("caller", 0);
 
         startActivity(slider);
 
@@ -161,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             while (i < 25) {
                 line = br.readLine();
                 String[] parts = line.split(",");
-                id_biljke.put(Integer.parseInt(parts[0]), parts[2]);
+                id_biljke.put(Integer.parseInt(parts[0])-1, parts[2]);
                 biljke_id.put(parts[2],Integer.parseInt(parts[0]) - 1);
                 zadaj_grupu(parts[2],parts[3]);
                 biljke_alergenost.put(parts[2],Integer.parseInt(parts[4]));

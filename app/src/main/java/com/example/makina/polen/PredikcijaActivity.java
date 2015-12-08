@@ -36,12 +36,14 @@ public class PredikcijaActivity extends AppCompatActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_gradovi);
+        final Spinner spinner = (Spinner) findViewById(R.id.spinner_gradovi);
         spinner.setAdapter(adapter);
 
-        DatePicker picker = (DatePicker) findViewById(R.id.kalendar);
+        final DatePicker picker = (DatePicker) findViewById(R.id.kalendar);
 
-        Button btn = (Button) findViewById(R.id.predikcija_launch_button);
+        final Button btn = (Button) findViewById(R.id.predikcija_launch_button);
+
+        int grad_id;
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,12 +51,17 @@ public class PredikcijaActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(context, ScreenSlidePagerActivity.class);
 
+                intent.putExtra("dan", picker.getDayOfMonth());
+                intent.putExtra("mesec", picker.getMonth());
+                intent.putExtra("godina",picker.getYear());
+                intent.putExtra("grad_id", spinner.getSelectedItemPosition() + 1);
+                intent.putExtra("caller", 1);
 
+                startActivity(intent);
 
             }
         });
             }
-
 
 
 }

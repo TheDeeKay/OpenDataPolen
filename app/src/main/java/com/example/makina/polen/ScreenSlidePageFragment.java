@@ -11,22 +11,26 @@ import android.widget.TextView;
 
 public class ScreenSlidePageFragment extends Fragment {
     private int id_biljke;
-    private int id_lokacije;
-    double longitude = 20.1;
-    double lattitude = 56.2;
+    private int id_lokacije = 1;
+    double longitude = 20.46;
+    double lattitude = 44.81;
 
     int position;
 
-    /*public ScreenSlidePageFragment newInstance(int pos){
-        ScreenSlidePageFragment fr = new ScreenSlidePageFragment();
+    //Konstruktor sa argumentom pozicije
+    public static ScreenSlidePageFragment newInstance(int position){
 
-    }*/
+        ScreenSlidePageFragment tmp = new ScreenSlidePageFragment();
+
+        tmp.position = position;
+
+        return tmp;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        position = getArguments().getInt("length");
     }
 
     @Override
@@ -52,39 +56,33 @@ public class ScreenSlidePageFragment extends Fragment {
         });
 
 
-
-        //Referenca na tekst poruke
-        TextView porukaText = (TextView) rootView.findViewById(R.id.fragment_poruka);
-
-        //Uzmi informacije o biljci i lokaciji
-        MainActivity.Kljuc kljuc = MainActivity.pozicije.get(position);
-        this.id_biljke = kljuc.id_biljke;
-        this.id_lokacije = kljuc.id_lokacije;
-
-        //Log.e("KLJUCEVI", id_biljke + ", " + MainActivity.id_biljke.get(id_biljke));
-
-
         //Referenca na TextView za ime biljke
         TextView imeBiljke = (TextView) rootView.findViewById(R.id.fragment_ime_biljke);
         //Postavi ime biljke na odgovarajuce
-        imeBiljke.setText(MainActivity.id_biljke.get(this.id_biljke));
+        imeBiljke.setText(MainActivity.id_biljke.get(position));
 
-        double koncentracija = 100/3*MainActivity.predikcija(15, 7, 2016, 2, longitude, lattitude,
-                3, id_biljke, id_lokacije);
+        String ime_lokacija = MainActivity.id_lokacija.get(ScreenSlidePagerActivity.grad_id);
+
+        double koncentracija = 100/3*MainActivity.predikcija(ScreenSlidePagerActivity.dan,
+                ScreenSlidePagerActivity.mesec, ScreenSlidePagerActivity.godina,
+                MainActivity.biljke_alergenost.get(MainActivity.id_biljke.get(position)),
+                MainActivity.lokacija_visina.get(ime_lokacija),
+                MainActivity.lokacija_sirina.get(ime_lokacija),
+                MainActivity.biljke_grupa.get(imeBiljke.getText()),
+                position, ScreenSlidePagerActivity.grad_id);
         String k_tmp = null;
         if( koncentracija > 67 ) k_tmp = "Dangerous";
         else if(koncentracija > 34) k_tmp = "Be careful";
         else k_tmp = "Nothing to worry";
+
+        //Promeni tekst poruke
+        TextView porukaText = (TextView) rootView.findViewById(R.id.fragment_poruka);
         porukaText.setText(k_tmp);
 
-        //Log.e("NADAMO SE", ScreenSlidePagerActivity.lat + " " + ScreenSlidePagerActivity.longit);
+        porukaText.setText(k_tmp);
 
-        TextView poruka = (TextView) rootView.findViewById(R.id.fragment_poruka);
-
-        poruka.setText(k_tmp);
-
-        TextView beten = (TextView)rootView.findViewById(R.id.ajde);
-        beten.setText(String.valueOf(koncentracija));
+        TextView koncentracijaText = (TextView)rootView.findViewById(R.id.koncentracija);
+        koncentracijaText.setText(String.valueOf(Math.round(koncentracija))+"%");
 
         return rootView;
     }
