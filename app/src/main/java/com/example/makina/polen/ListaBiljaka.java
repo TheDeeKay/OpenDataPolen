@@ -15,10 +15,6 @@ import java.util.List;
 
 public class ListaBiljaka extends AppCompatActivity {
 
-    public ListaBiljaka() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

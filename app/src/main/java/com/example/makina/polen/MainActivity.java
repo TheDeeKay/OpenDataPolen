@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             br.readLine();
             String line = null;
             int i = 0;
-            while (i < 25) {
+            while (i < UKUPNO_BILJAKA) {
                 line = br.readLine();
                 String[] parts = line.split(",");
                 id_biljke.put(Integer.parseInt(parts[0])-1, parts[2]);
