@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
                 JsonString = buffer.toString();
 
             } catch (IOException e) {
-                Log.e("Async task", "Error ", e);
+                Log.e("Async task", "Error (probably in connecting) ", e);
                 // Neuspesno uspostavljanje konekcije, nema parsiranja
                 return null;
             } finally {
