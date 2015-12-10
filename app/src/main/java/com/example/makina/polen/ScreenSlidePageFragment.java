@@ -27,6 +27,10 @@ public class ScreenSlidePageFragment extends Fragment {
         return tmp;
     }
 
+    public int getPosition(){
+        return this.position;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

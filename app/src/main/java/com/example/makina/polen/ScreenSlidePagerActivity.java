@@ -93,9 +93,11 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         @Override
         public int getItemPosition(Object object) {
 
-            //Ako se item nalazi u nizu selektovanih biljaka, vrati njegov indeks
+            //TODO optimizovati ovo
+
+            /*//Ako se item nalazi u nizu selektovanih biljaka, vrati njegov indeks
             int index = sc.indexOf(object);
-            if(index >= 0) return index;
+            if(index >= 0) return index;*/
 
             //Inace, obrisi ga
             return POSITION_NONE;
