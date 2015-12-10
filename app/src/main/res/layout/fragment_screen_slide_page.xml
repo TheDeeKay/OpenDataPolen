@@ -42,7 +42,7 @@
         android:layout_marginLeft="32dp"
         android:fontFamily="sans-serif"
         android:gravity="bottom"
-        android:text="Ime biljke"
+        android:text=""
         android:textColor="@android:color/black"
         android:textSize="16sp"
         />
@@ -54,7 +54,7 @@
         android:layout_marginLeft="32dp"
         android:layout_weight="2"
         android:fontFamily="sans-serif"
-        android:text="PORUKA"
+        android:text="SELEKTUJ NEKE BILJKE!"
         android:textColor="@android:color/black"
         android:textSize="32sp"
         android:layout_marginTop="18dp"/>

@@ -15,10 +15,10 @@ public class ScreenSlidePageFragment extends Fragment {
     double longitude = 20.46;
     double lattitude = 44.81;
 
-    int position;
+    int position = -1;
 
     //Konstruktor sa argumentom pozicije
-    public static ScreenSlidePageFragment newInstance(int position){
+    public static ScreenSlidePageFragment newInstance(int position) {
 
         ScreenSlidePageFragment tmp = new ScreenSlidePageFragment();
 
@@ -34,13 +34,12 @@ public class ScreenSlidePageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_screen_slide_page, container, false);
 
         //Referenca na button za meni za predikciju
         Button predikcijaBtn = (Button) rootView.findViewById(R.id.predikcija_button);
-
 
 
         //ClickListener za predikciju, poziva predikcija activity
@@ -55,31 +54,37 @@ public class ScreenSlidePageFragment extends Fragment {
 
         //Referenca na TextView za ime biljke
         TextView imeBiljke = (TextView) rootView.findViewById(R.id.fragment_ime_biljke);
-        //Postavi ime biljke na odgovarajuce
-        imeBiljke.setText(MainActivity.id_biljke.get(position));
 
-        String ime_lokacija = MainActivity.id_lokacija.get(ScreenSlidePagerActivity.grad_id);
 
-        double koncentracija = 100/3*MainActivity.predikcija(ScreenSlidePagerActivity.dan,
-                ScreenSlidePagerActivity.mesec, ScreenSlidePagerActivity.godina,
-                MainActivity.biljke_alergenost.get(MainActivity.id_biljke.get(position)),
-                MainActivity.lokacija_visina.get(ime_lokacija),
-                MainActivity.lokacija_sirina.get(ime_lokacija),
-                MainActivity.biljke_grupa.get(imeBiljke.getText()),
-                position, ScreenSlidePagerActivity.grad_id);
-        String k_tmp = null;
-        if( koncentracija > 67 ) k_tmp = "Dangerous";
-        else if(koncentracija > 34) k_tmp = "Be careful";
-        else k_tmp = "Nothing to worry";
+        //Ako pozicija nije -1 (ili drugacije - ako ima selektovanih biljaka)
+        if (position >= 0) {
+            //Postavi ime biljke na odgovarajuce, ako position nije -1
+            imeBiljke.setText(MainActivity.id_biljke.get(position));
 
-        //Promeni tekst poruke
-        TextView porukaText = (TextView) rootView.findViewById(R.id.fragment_poruka);
-        porukaText.setText(k_tmp);
+            String ime_lokacija = MainActivity.id_lokacija.get(ScreenSlidePagerActivity.grad_id);
 
-        porukaText.setText(k_tmp);
+            double koncentracija = 100 / 3 * MainActivity.predikcija(ScreenSlidePagerActivity.dan,
+                    ScreenSlidePagerActivity.mesec, ScreenSlidePagerActivity.godina,
+                    MainActivity.biljke_alergenost.get(MainActivity.id_biljke.get(position)),
+                    MainActivity.lokacija_visina.get(ime_lokacija),
+                    MainActivity.lokacija_sirina.get(ime_lokacija),
+                    MainActivity.biljke_grupa.get(imeBiljke.getText()),
+                    position, ScreenSlidePagerActivity.grad_id);
+            String k_tmp = null;
+            if (koncentracija > 67) k_tmp = "Dangerous";
+            else if (koncentracija > 34) k_tmp = "Be careful";
+            else k_tmp = "Nothing to worry";
 
-        TextView koncentracijaText = (TextView)rootView.findViewById(R.id.koncentracija);
-        koncentracijaText.setText(String.valueOf(Math.round(koncentracija))+"%");
+            //Promeni tekst poruke
+            TextView porukaText = (TextView) rootView.findViewById(R.id.fragment_poruka);
+            porukaText.setText(k_tmp);
+
+            porukaText.setText(k_tmp);
+
+            TextView koncentracijaText = (TextView) rootView.findViewById(R.id.koncentracija);
+            koncentracijaText.setText(String.valueOf(Math.round(koncentracija)) + "%");
+
+        }
 
         return rootView;
     }

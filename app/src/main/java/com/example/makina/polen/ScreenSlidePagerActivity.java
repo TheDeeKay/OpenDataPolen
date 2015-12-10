@@ -69,19 +69,35 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         @Override
         public Fragment getItem(int position) {
 
-            return sc.get(
-                    MainActivity.pozicijaBiljkeUSelektovanim(MainActivity.pozicijaBiljkeSaIdom(position)));
+            /*
+            Ako je sve deselektovano, vrati mu default slider screen
+            Na default slider screenu pise da treba da selektuje neku biljku
+             */
+            if(sc.isEmpty())
+                return new ScreenSlidePageFragment();
+
+            //U suprotnom, vrati biljku sa odgovarajuce pozicije
+            return sc.get(position);
         }
 
         @Override
         public int getCount() {
 
+            //Ako je lista prazna, vrati da je count 1 (da se prikaze bazni fragment)
+            if(sc.isEmpty()) return 1;
+
+            //U suprotnom, vrati broj selektovanih biljaka
             return MainActivity.countBiljke();
         }
 
         @Override
         public int getItemPosition(Object object) {
 
+            //Ako se item nalazi u nizu selektovanih biljaka, vrati njegov indeks
+            int index = sc.indexOf(object);
+            if(index >= 0) return index;
+
+            //Inace, obrisi ga
             return POSITION_NONE;
         }
     }

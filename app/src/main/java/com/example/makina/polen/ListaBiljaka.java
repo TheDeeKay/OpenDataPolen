@@ -57,10 +57,6 @@ public class ListaBiljaka extends AppCompatActivity {
             ScreenSlidePagerActivity.sc.add(MainActivity.pozicijaBiljkeUSelektovanim(id), ScreenSlidePageFragment.newInstance(id));
         }
 
-        //ScreenSlidePagerActivity.mPagerAdapter.notifyDataSetChanged();
-
-        //ScreenSlidePagerActivity.mPager.setAdapter(ScreenSlidePagerActivity.mPagerAdapter);
-
     }
 
 }
