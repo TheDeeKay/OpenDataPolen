@@ -16,11 +16,17 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
 
     public static int dan = 7, mesec = 6, godina = 2016, grad_id = 1;
 
-    private ViewPager mPager;
+    public static ViewPager mPager;
 
     public static PagerAdapter mPagerAdapter;
 
     public static ArrayList<ScreenSlidePageFragment> sc = new ArrayList<ScreenSlidePageFragment>();
+
+    @Override
+    protected void onResume() {
+        mPagerAdapter.notifyDataSetChanged();
+        super.onResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,6 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-
     }
 
     //Dugme za meni, onClick
@@ -64,13 +69,20 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         @Override
         public Fragment getItem(int position) {
 
-            return sc.get(position);
+            return sc.get(
+                    MainActivity.pozicijaBiljkeUSelektovanim(MainActivity.pozicijaBiljkeSaIdom(position)));
         }
 
         @Override
         public int getCount() {
 
             return MainActivity.countBiljke();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+
+            return POSITION_NONE;
         }
     }
 }

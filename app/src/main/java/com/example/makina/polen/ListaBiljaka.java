@@ -52,17 +52,18 @@ public class ListaBiljaka extends AppCompatActivity {
         if (MainActivity.biljkeChecked[id] == 0) {
 
             txt.setPaintFlags(txt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
             MainActivity.biljkeChecked[id] = 1;
+            ScreenSlidePagerActivity.sc.remove(MainActivity.pozicijaBiljkeUSelektovanim(id));
 
-            ScreenSlidePagerActivity.sc.remove(id);
         } else {
             MainActivity.biljkeChecked[id] = 0;
             txt.setPaintFlags(txt.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            ScreenSlidePagerActivity.sc.add(id, ScreenSlidePageFragment.newInstance(id));
+            ScreenSlidePagerActivity.sc.add(MainActivity.pozicijaBiljkeUSelektovanim(id), ScreenSlidePageFragment.newInstance(id));
         }
 
-        ScreenSlidePagerActivity.mPagerAdapter.notifyDataSetChanged();
+        //ScreenSlidePagerActivity.mPagerAdapter.notifyDataSetChanged();
+
+        //ScreenSlidePagerActivity.mPager.setAdapter(ScreenSlidePagerActivity.mPagerAdapter);
 
     }
 

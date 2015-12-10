@@ -42,12 +42,24 @@ public class MainActivity extends AppCompatActivity {
         return j;
     }
 
-    //Metod za trazenje pozicije biljke u okviru selektovanih
-    public static int pozicijaBiljke(int position){
-        int i;
-        for(i=0; position>0 && i<UKUPNO_BILJAKA; i++)
-            if(biljkeChecked[i] == 0) position--;
+    /*
+    Vraca ID biljke koja je na position mestu u nizu selektovanih biljaka
+     */
+    public static int pozicijaBiljkeSaIdom(int position){
+        int current=0, i;
+        for(i=0; i<UKUPNO_BILJAKA && (current != position); i++)
+            if(biljkeChecked[i] == 0) current++;
+
         return i;
+    }
+
+    /*
+    Uzima ID biljke, vraca poziciju te biljke u nizu selektovanih biljaka
+     */
+    public static int pozicijaBiljkeUSelektovanim(int id){
+        int j = 0;
+        for(int i=0; i<id; i++) if(biljkeChecked[i] == 0) j++;
+        return j;
     }
 
     //Kljuc za trazenje po Hash tabelama, sastoji se od id-a biljke i lokacije

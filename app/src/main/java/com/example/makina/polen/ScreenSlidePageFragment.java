@@ -30,7 +30,6 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -38,8 +37,6 @@ public class ScreenSlidePageFragment extends Fragment {
             Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_screen_slide_page, container, false);
-
-
 
         //Referenca na button za meni za predikciju
         Button predikcijaBtn = (Button) rootView.findViewById(R.id.predikcija_button);
