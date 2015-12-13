@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.example.makina.polen"
+        applicationId "com.example.makina.Androgen"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

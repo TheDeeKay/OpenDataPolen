@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.makina.polen">
+    package="com.example.makina.Androgen">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.makina.Androgen.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -23,25 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ScreenSlidePagerActivity"
+            android:name="com.example.makina.Androgen.ScreenSlidePagerActivity"
             android:label="@string/title_activity_screenslidepager"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.example.makina.Androgen.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.makina.polen.MainActivity" />
+                android:value="com.example.makina.Androgen.MainActivity" />
         </activity>
         <activity
-            android:name=".ListaBiljaka"
+            android:name="com.example.makina.Androgen.ListaBiljaka"
             android:label="FragmentList"
-            android:parentActivityName=".ScreenSlidePagerActivity"
+            android:parentActivityName="com.example.makina.Androgen.ScreenSlidePagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.makina.polen.ScreenSlidePagerActivity" />
+                android:value="com.example.makina.Androgen.ScreenSlidePagerActivity" />
         </activity>
 
-        <receiver android:name=".NewAppWidget">
+        <receiver android:name="com.example.makina.Androgen.NewAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -52,13 +52,13 @@
         </receiver>
 
         <activity
-            android:name=".PredikcijaActivity"
+            android:name="com.example.makina.Androgen.PredikcijaActivity"
             android:label="@string/title_activity_predikcija"
-            android:parentActivityName=".ScreenSlidePagerActivity"
+            android:parentActivityName="com.example.makina.Androgen.ScreenSlidePagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.makina.polen.ScreenSlidePagerActivity" />
+                android:value="com.example.makina.Androgen.ScreenSlidePagerActivity" />
         </activity>
     </application>
 
