@@ -1,24 +1,36 @@
-package com.example.makina.polen;
+package com.example.makina.Androgen;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
-public class ScreenSlidePagerActivity extends AppCompatActivity{
+public class ScreenSlidePagerActivity extends AppCompatActivity {
 
-    public static int dan = 7, mesec = 6, godina = 2016, grad_id = 1;
+    public static int dan = 7, mesec = 6, godina = 2016, grad_id = 0;
 
     public static ViewPager mPager;
 
+    static Context context;
+
     public static PagerAdapter mPagerAdapter;
+
+    public static GPSTracker gps = null;
 
     public static ArrayList<ScreenSlidePageFragment> sc = new ArrayList<ScreenSlidePageFragment>();
 
@@ -28,10 +40,17 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         super.onResume();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
+        context = this;
+
+        gps = new GPSTracker(this);
+
+        if(gps.location != null) postaviLokaciju(gps.location);
 
         Intent intent = getIntent();
         if((int) intent.getExtras().get("caller") == 1){
@@ -51,6 +70,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
         mPager.setAdapter(mPagerAdapter);
     }
 
+
     //Dugme za meni, onClick
     public void klikMeni(View view){
         Intent intent = new Intent(this, ListaBiljaka.class);
@@ -58,6 +78,28 @@ public class ScreenSlidePagerActivity extends AppCompatActivity{
 
     }
 
+    //Postavlja grad_id na trenutnu lokaciju, ako je to moguce
+    public static void postaviLokaciju(Location location){
+
+        Geocoder gcd = new Geocoder(context, Locale.getDefault());
+        List<Address> address = null;
+
+        try {
+            address = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(address != null){
+            String grad = address.get(0).getLocality();
+
+            if(MainActivity.lokacija_id.containsKey(grad))
+                grad_id = MainActivity.lokacija_id.get(grad);
+        }
+
+        Log.e("postaviLokaciju", "Lokacija je: " + gps.getLongitude() + ", " + gps.getLatitude()
+                + ", a grad je " + MainActivity.id_lokacija.get(grad_id));
+    }
 
 
     //PagerAdapter, pravi ViewPager iteme za biljke, ukupno countBiljke()

@@ -1,4 +1,4 @@
-package com.example.makina.polen;
+package com.example.makina.Androgen;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] pp = parts[1].split(" ");
                     parts[1] = pp[0];
                 }
-                id_lokacija.put(Integer.parseInt(parts[0]), parts[1]);
+                id_lokacija.put(Integer.parseInt(parts[0]) - 1, parts[1]);
                 lokacija_id.put(parts[1], Integer.parseInt(parts[0]) - 1);
                 lokacija_sirina.put(parts[1], Double.valueOf(parts[2]));
                 lokacija_visina.put(parts[1], Double.valueOf(parts[3]));
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
                 JsonString = buffer.toString();
 
             } catch (IOException e) {
-                Log.e("Async task", "Error ", e);
+                Log.e("Async task", "Error (probably in connecting) ", e);
                 // Neuspesno uspostavljanje konekcije, nema parsiranja
                 return null;
             } finally {

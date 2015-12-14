@@ -1,8 +1,9 @@
-package com.example.makina.polen;
+package com.example.makina.Androgen;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,8 @@ public class ScreenSlidePageFragment extends Fragment {
             imeBiljke.setText(MainActivity.id_biljke.get(position));
 
             String ime_lokacija = MainActivity.id_lokacija.get(ScreenSlidePagerActivity.grad_id);
+
+            Log.e("FragmentLokacija", " " + ime_lokacija);
 
             double koncentracija = 100 / 3 * MainActivity.predikcija(ScreenSlidePagerActivity.dan,
                     ScreenSlidePagerActivity.mesec, ScreenSlidePagerActivity.godina,
