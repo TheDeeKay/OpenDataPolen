@@ -36,6 +36,9 @@ public class ListaBiljaka extends AppCompatActivity {
 
         ListView list = (ListView) findViewById(R.id.lista_biljaka);
 
+        list.setDivider(null);
+        list.setDividerHeight(40);
+
         list.setAdapter(adapter);
 
     }
