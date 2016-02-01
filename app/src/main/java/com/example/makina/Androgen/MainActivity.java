@@ -1,5 +1,6 @@
 package com.example.makina.Androgen;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -197,6 +198,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //Otvori sharedpref za listu biljaka (u njemu stoje selektovane biljke)
+        //key je ID biljke u stringu, value je 0 ili 1 za selektovano ili ne
+        sharedPref = getSharedPreferences(getString(R.string.preference_selektovane_biljke),
+                Context.MODE_PRIVATE);
+
+        //Proveri da li je sharedPref prazan
+        if (sharedPref.getInt(Integer.toString(0), -1) == -1)
+        //ako jeste, popuni sve 0 (sve su selektovane)
+        {
+            SharedPreferences.Editor editor = sharedPref.edit();
+
+            for (int i = 0; i < UKUPNO_BILJAKA; i++)
+                editor.putInt(Integer.toString(i), 0);
+
+            editor.commit();
+        }
+        //ako nije, ucitaj u listu biljaka checked
+        else
+            for (int i = 0; i < UKUPNO_BILJAKA; i++)
+                biljkeChecked[i] = sharedPref.getInt(Integer.toString(i), 0);
+
 
         //onCreate puni input streamove jer moraju da budu static da bi se zvali iz predikcija
         isVrstePolena = getResources().openRawResource(R.raw.vrste_polena);

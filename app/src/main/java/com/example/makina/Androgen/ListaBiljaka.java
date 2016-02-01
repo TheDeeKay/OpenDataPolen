@@ -1,6 +1,7 @@
 package com.example.makina.Androgen;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -50,17 +51,26 @@ public class ListaBiljaka extends AppCompatActivity {
 
         int id = MainActivity.biljke_id.get(txt.getText());
 
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_selektovane_biljke),
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+
         if (MainActivity.biljkeChecked[id] == 0) {
 
             txt.setPaintFlags(txt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             MainActivity.biljkeChecked[id] = 1;
             ScreenSlidePagerActivity.sc.remove(MainActivity.pozicijaBiljkeUSelektovanim(id));
+            editor.putInt(Integer.toString(id), 1);
 
         } else {
             MainActivity.biljkeChecked[id] = 0;
             txt.setPaintFlags(txt.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             ScreenSlidePagerActivity.sc.add(MainActivity.pozicijaBiljkeUSelektovanim(id), ScreenSlidePageFragment.newInstance(id));
+            editor.putInt(Integer.toString(id), 0);
         }
+
+        editor.commit();
 
     }
 

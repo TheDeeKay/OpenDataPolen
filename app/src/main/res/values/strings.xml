@@ -11,4 +11,5 @@
     <string name="title_activity_android_gpstracking">AndroidGPSTrackingActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_predikcija">PredikcijaActivity</string>
+    <string name="preference_selektovane_biljke">com.example.makina.Androgen.preference_lista_biljaka</string>
 </resources>
