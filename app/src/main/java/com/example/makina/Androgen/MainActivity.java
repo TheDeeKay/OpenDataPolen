@@ -28,10 +28,32 @@ public class MainActivity extends AppCompatActivity {
 
     //Cuva koliko ukupno biljaka postoji
     final static int UKUPNO_BILJAKA = 25;
-
-
+    //Streamovi koji se koriste za predikcije
+    public static InputStream isVrstePolena;
+    public static InputStream isNormalizacija;
+    public static InputStream isStanice;
+    public static InputStream isStepeni;
+    public static InputStream isTezine;
+    public static ArrayList<Kljuc> pozicije = new ArrayList<>();
+    //Cuva ime biljke, pa id
+    public static HashMap<String, Integer> biljke_id = new HashMap<>();
+    public static HashMap<String, Integer> biljke_grupa = new HashMap<>();
+    public static HashMap<String, Integer> biljke_alergenost = new HashMap<>();
+    public static HashMap<String, Integer> lokacija_id = new HashMap<>();
+    public static HashMap<String, Double> lokacija_visina = new HashMap<>();
+    public static HashMap<String, Double> lokacija_sirina = new HashMap<>();
+    public static HashMap<Integer, String> id_biljke = new HashMap<>();
+    public static HashMap<Integer, String> id_lokacija = new HashMap<>();
     //Cuva koje su biljke selektovane
     static int[] biljkeChecked = new int[UKUPNO_BILJAKA];
+
+    //SharedPreference za listu biljaka
+    static SharedPreferences sharedPref = null;
+    private static ArrayList<double[]> listaStepena;
+    private static double[] bias;
+    private static ArrayList<double[]> listatezina;
+    private static double[] mean;
+    private static double[] std;
 
     //Metod za brojanje selektovanih biljaka
     public static int countBiljke(){
@@ -62,23 +84,114 @@ public class MainActivity extends AppCompatActivity {
         return j;
     }
 
-    //Kljuc za trazenje po Hash tabelama, sastoji se od id-a biljke i lokacije
-    class Kljuc{
-        int id_lokacije;
-        int id_biljke;
+    public static void sortiraj_listu(ArrayList<String[]> lista, final int col_godina, final int col_mesec, final int col_dan) {
 
-        public Kljuc(int k1, int k2){id_lokacije=k1;id_biljke=k2;}
+
+        //Sorting
+        Collections.sort(lista, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] str1, String[] str2) {
+
+                if (str2[col_godina].equals(str1[col_godina])) {
+                    if (str2[col_mesec].equals(str1[col_mesec])) {
+                        return str1[col_dan].compareTo(str2[col_dan]);
+                    } else {
+                        return str1[col_mesec].compareTo(str2[col_mesec]);
+                    }
+                } else {
+                    return str1[col_godina].compareTo(str2[col_godina]);
+                }
+
+            }
+        });
 
     }
 
-    //Streamovi koji se koriste za predikcije
-    public static InputStream isVrstePolena;
-    public static InputStream isNormalizacija;
-    public static InputStream isStanice;
-    public static InputStream isStepeni;
-    public static InputStream isTezine;
+    private static double[] update_stepene(double[] glavni, ArrayList<double[]> stepeni) {
+        double[] ret = new double[stepeni.size()];
+        int len = stepeni.size();
+        for (int k = 0; k < len; k++) {
+            double[] tmp = stepeni.get(k);
+            ret[k] = update_pojedinacni_feature(glavni, tmp);
+        }
+        return ret;
+    }
 
-    public static ArrayList<Kljuc> pozicije = new ArrayList<>();
+    private static double update_pojedinacni_feature(double[] glavni, double[] stepeni) {
+        double ret = 1;
+        for (int i = 0; i < stepeni.length; i++)
+            ret *= Math.pow(glavni[i], stepeni[i]);
+
+        return ret;
+    }
+
+    private static double mnozenje_vektora(double[] prvi, double[] drugi, double bias) {
+        double rez = 0;
+        if (prvi.length != drugi.length)
+            return rez;
+        for (int i = 0; i < prvi.length; i++)
+            rez += prvi[i] * drugi[i];
+        rez += bias;
+
+        return rez;
+    }
+
+    private static double sigmoid(double x) {
+        return (double) 1 / (1 + Math.exp(-x));
+    }
+
+    public static int predikcija(double dan, double mesec, double godina,
+                                 double alergenost, double duzina, double sirina,
+                                 double idGrupe, double idVrste, double idLokacije) {
+
+        int vr_vel = 19, grp_vel = 3, lok_vel = 26;
+
+
+        double[] konacanVektor = new double[53];
+        konacanVektor[0] = dan;
+        konacanVektor[1] = mesec;
+        konacanVektor[2] = godina;
+        konacanVektor[3] = alergenost;
+        konacanVektor[4] = duzina;
+        konacanVektor[5] = sirina;
+        konacanVektor[(int) idGrupe + 6] = 1;
+        konacanVektor[(int) idVrste + 9] = 1;
+        konacanVektor[(int) idLokacije + 35] = 1;
+
+        //for(int i=6;i<53;i++)
+        //konacanVektor[i]--;
+
+        double[] finalni_feature = update_stepene(konacanVektor, listaStepena);
+
+
+        for (int i = 0; i < finalni_feature.length; i++)
+            finalni_feature[i] = (double) (finalni_feature[i] - mean[i]) / std[i];
+
+        double[] rezultati = new double[3];
+        for (int i = 0; i < 3; i++)
+            rezultati[i] = mnozenje_vektora(finalni_feature, listatezina.get(i), bias[i]);
+
+        for (int i = 0; i < 3; i++)
+            rezultati[i] = sigmoid(rezultati[i]);
+
+
+        int retVal = 0;
+
+        rezultati[2] *= 3;
+
+        for (int i = 0; i < 3; i++)
+            System.out.println("Rezultat klasifikatora: " + i + " je: " + rezultati[i]);
+
+        double curr_max = Math.max(rezultati[0], rezultati[1]);
+        curr_max = Math.max(rezultati[2], curr_max);
+
+
+        for (int i = 0; i < 3; i++)
+            if (curr_max == rezultati[i])
+                retVal = i;
+
+        return retVal;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -137,18 +249,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    //Cuva ime biljke, pa id
-    public static HashMap<String, Integer> biljke_id = new HashMap<>();
-    public static HashMap<String, Integer> biljke_grupa = new HashMap<>();
-    public static HashMap<String, Integer> biljke_alergenost = new HashMap<>();
-    public static HashMap<String, Integer> lokacija_id = new HashMap<>();
-    public static HashMap<String, Double> lokacija_visina = new HashMap<>();
-    public static HashMap<String, Double> lokacija_sirina = new HashMap<>();
-    public static HashMap<Integer, String> id_biljke = new HashMap<>();
-    public static HashMap<Integer, String> id_lokacija = new HashMap<>();
-
-
 
     public void zadaj_grupu(String s, String g){
         if (g.equals("Drvece"))
@@ -225,210 +325,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    public static void sortiraj_listu(ArrayList<String[]> lista, final int col_godina, final int col_mesec, final int col_dan){
-
-
-
-        //Sorting
-        Collections.sort(lista, new Comparator<String[]>() {
-            @Override
-            public int compare(String[] str1, String[] str2) {
-
-                if (str2[col_godina].equals(str1[col_godina])) {
-                    if (str2[col_mesec].equals(str1[col_mesec])){
-                        return str1[col_dan].compareTo(str2[col_dan]);
-                    }else{
-                        return str1[col_mesec].compareTo(str2[col_mesec]);
-                    }
-                } else {
-                    return str1[col_godina].compareTo(str2[col_godina]);
-                }
-
-            }
-        });
-
-    }
-
-    /*
-    Async Task za fetchovanje JSON data
-     */
-    public static class FetchData extends AsyncTask<String, Void, String>{
-
-        private String[] getDataFromJson(String JsonStr)
-                throws JSONException {
-
-            /*
-            Mora da se deklarise van try bloka da bi mogao da se koristi u return-u
-             */
-            String rezultat[] = null;
-
-            try {
-
-                /*
-                Parsiraj result, pa records da bi dobio entryje sa kolonama
-                 */
-                JSONObject Json = new JSONObject(JsonStr);
-                JSONObject result = Json.getJSONObject("result");
-                JSONArray records = result.getJSONArray("records");
-
-                ArrayList<String[]> lista = new ArrayList<>();
-
-                rezultat = new String[records.length()];
-                for(int i = 0; i < records.length(); i++) {
-
-                    //Kolone koje posle sklapamo u rezultat
-                    String datum;
-                    String tendencija;
-                    String koncentracija;
-
-                    JSONObject dan = records.getJSONObject(i);
-
-                    datum = dan.getString("DATUM");
-                    String[] parts = datum.split("-");
-                    tendencija = dan.getString("TENDENCIJA");
-                    koncentracija = dan.getString("KONCENTRACIJA");
-
-                    String[] linija  = new String[5];
-                    linija[0] = parts[0];linija[1] = parts[1];linija[2] = parts[2];
-
-                    linija[3] = tendencija; linija[4] = koncentracija;
-
-                    lista.add(linija);
-
-                    rezultat[i] = "Datum: "+datum+"\nTendencija: "+tendencija+
-                            "\nKoncentracija: "+koncentracija+"\n";
-                }
-
-                sortiraj_listu(lista, 0, 1, 2);
-
-
-                for(int i=0;i<30;i++)
-                {
-                    String[] str = lista.get(i);
-
-
-                    for(int j=0;j<5;j++)
-                        System.out.println(" " + str[j]);
-                }
-
-            } catch(JSONException e){
-                Log.v("getDataFromJson", "Error", e);
-                return null;
-            }
-
-
-            return rezultat;
-
-        }
-
-        String JsonString = null;
-
-
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-
-            try {
-                //Konstruisi URL za konekciju na sajt agencije
-                String baseUrl = "http://data.sepa.gov.rs/api/action/datastore/search.json?resource_id=d291f9c7-b1a4-4c97-9618-c545a22fb23d";
-                URL url = new URL(baseUrl);
-
-                // Postavi request na GET i uspostavi konekciju
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Ucitaj input stream u String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    Log.e("Async Task", "inputStream is empty");
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                //Prebaci u string buffer
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Buffer prazan,nema sta da se parsira
-                    return null;
-                }
-                JsonString = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e("Async task", "Error (probably in connecting) ", e);
-                // Neuspesno uspostavljanje konekcije, nema parsiranja
-                return null;
-            } finally {
-                //zatvori konekciju
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("Async task", "Error closing stream", e);
-                    }
-                }
-            }
-            return JsonString;
-
-        }
-
-    }
-
-    private static double[] update_stepene(double[] glavni, ArrayList<double[]> stepeni){
-        double[] ret = new double[stepeni.size()];
-        int len = stepeni.size();
-        for(int k=0;k<len;k++) {
-            double[] tmp = stepeni.get(k);
-            ret[k] = update_pojedinacni_feature(glavni, tmp);
-        }
-        return ret;
-    }
-
-    private static double update_pojedinacni_feature(double[] glavni, double[] stepeni){
-        double ret = 1;
-        for(int i=0;i<stepeni.length;i++)
-            ret *= Math.pow(glavni[i],stepeni[i]);
-
-        return ret;
-    }
-
-
-    private static double mnozenje_vektora(double[] prvi, double[] drugi, double bias){
-        double rez = 0;
-        if( prvi.length != drugi.length)
-            return rez;
-        for(int i=0;i<prvi.length;i++)
-            rez += prvi[i]*drugi[i];
-        rez += bias;
-
-        return rez;
-    }
-
-    private static double sigmoid(double x){
-        return (double)1/(1 + Math.exp(-x));
-    }
-
-    private static ArrayList<double[]> listaStepena;
-    private static double[] bias;
-    private static ArrayList<double[]> listatezina;
-    private static double[] mean;
-    private static double[] std;
-
-
 
     private void citanje_iz_fajlova(){
         StringBuilder text = new StringBuilder();
@@ -656,57 +552,153 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static int predikcija(double dan, double mesec, double godina,
-                           double alergenost, double duzina, double sirina,
-                           double idGrupe, double idVrste, double idLokacije ){
+    /*
+    Async Task za fetchovanje JSON data
+     */
+    public static class FetchData extends AsyncTask<String, Void, String> {
 
-        int vr_vel = 19, grp_vel = 3, lok_vel = 26;
+        String JsonString = null;
+
+        private String[] getDataFromJson(String JsonStr)
+                throws JSONException {
+
+            /*
+            Mora da se deklarise van try bloka da bi mogao da se koristi u return-u
+             */
+            String rezultat[] = null;
+
+            try {
+
+                /*
+                Parsiraj result, pa records da bi dobio entryje sa kolonama
+                 */
+                JSONObject Json = new JSONObject(JsonStr);
+                JSONObject result = Json.getJSONObject("result");
+                JSONArray records = result.getJSONArray("records");
+
+                ArrayList<String[]> lista = new ArrayList<>();
+
+                rezultat = new String[records.length()];
+                for (int i = 0; i < records.length(); i++) {
+
+                    //Kolone koje posle sklapamo u rezultat
+                    String datum;
+                    String tendencija;
+                    String koncentracija;
+
+                    JSONObject dan = records.getJSONObject(i);
+
+                    datum = dan.getString("DATUM");
+                    String[] parts = datum.split("-");
+                    tendencija = dan.getString("TENDENCIJA");
+                    koncentracija = dan.getString("KONCENTRACIJA");
+
+                    String[] linija = new String[5];
+                    linija[0] = parts[0];
+                    linija[1] = parts[1];
+                    linija[2] = parts[2];
+
+                    linija[3] = tendencija;
+                    linija[4] = koncentracija;
+
+                    lista.add(linija);
+
+                    rezultat[i] = "Datum: " + datum + "\nTendencija: " + tendencija +
+                            "\nKoncentracija: " + koncentracija + "\n";
+                }
+
+                sortiraj_listu(lista, 0, 1, 2);
 
 
-        double[] konacanVektor = new double[53];
-        konacanVektor[0] = dan;
-        konacanVektor[1] = mesec;
-        konacanVektor[2] = godina;
-        konacanVektor[3] = alergenost;
-        konacanVektor[4] = duzina;
-        konacanVektor[5] = sirina;
-        konacanVektor[(int)idGrupe + 6] = 1;
-        konacanVektor[(int)idVrste + 9] = 1;
-        konacanVektor[(int)idLokacije + 35] = 1;
-
-        //for(int i=6;i<53;i++)
-        //konacanVektor[i]--;
-
-        double[] finalni_feature = update_stepene(konacanVektor, listaStepena);
+                for (int i = 0; i < 30; i++) {
+                    String[] str = lista.get(i);
 
 
-        for(int i=0;i<finalni_feature.length;i++)
-            finalni_feature[i] = (double)(finalni_feature[i] - mean[i])/std[i];
+                    for (int j = 0; j < 5; j++)
+                        System.out.println(" " + str[j]);
+                }
 
-        double[] rezultati = new double[3];
-        for(int i=0;i<3;i++)
-            rezultati[i] = mnozenje_vektora(finalni_feature, listatezina.get(i), bias[i]);
-
-        for(int i=0;i<3;i++)
-            rezultati[i] = sigmoid(rezultati[i]);
-
-
-        int retVal = 0;
-
-        rezultati[2] *= 3;
-
-        for(int i=0;i<3;i++)
-            System.out.println("Rezultat klasifikatora: " + i +" je: " + rezultati[i]);
-
-        double curr_max = Math.max(rezultati[0], rezultati[1]);
-        curr_max = Math.max(rezultati[2], curr_max);
+            } catch (JSONException e) {
+                Log.v("getDataFromJson", "Error", e);
+                return null;
+            }
 
 
-        for(int i=0;i<3;i++)
-            if (curr_max == rezultati[i])
-                retVal = i;
+            return rezultat;
 
-        return retVal;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+
+            try {
+                //Konstruisi URL za konekciju na sajt agencije
+                String baseUrl = "http://data.sepa.gov.rs/api/action/datastore/search.json?resource_id=d291f9c7-b1a4-4c97-9618-c545a22fb23d";
+                URL url = new URL(baseUrl);
+
+                // Postavi request na GET i uspostavi konekciju
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Ucitaj input stream u String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    Log.e("Async Task", "inputStream is empty");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                //Prebaci u string buffer
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Buffer prazan,nema sta da se parsira
+                    return null;
+                }
+                JsonString = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e("Async task", "Error (probably in connecting) ", e);
+                // Neuspesno uspostavljanje konekcije, nema parsiranja
+                return null;
+            } finally {
+                //zatvori konekciju
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("Async task", "Error closing stream", e);
+                    }
+                }
+            }
+            return JsonString;
+
+        }
+
+    }
+
+    //Kljuc za trazenje po Hash tabelama, sastoji se od id-a biljke i lokacije
+    class Kljuc {
+        int id_lokacije;
+        int id_biljke;
+
+        public Kljuc(int k1, int k2) {
+            id_lokacije = k1;
+            id_biljke = k2;
+        }
+
     }
 
 
